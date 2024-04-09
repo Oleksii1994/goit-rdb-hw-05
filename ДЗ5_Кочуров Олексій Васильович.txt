@@ -1,0 +1,55 @@
+﻿1. select *,
+(select customer_id from orders where orders.id = order_details.order_id) as customer_id 
+from order_details
+
+
+
+
+2. select * from order_details
+where order_id in (select order_id from orders where shipper_id=3)
+
+
+
+
+3. select order_id, avg(quantity) as avarage_quantity 
+from (select order_id, quantity from order_details where quantity > 10)  as temp_table
+group by order_id 
+
+
+
+
+4. with temp_table as (
+select order_id, quantity 
+from order_details 
+where quantity > 10
+)
+select order_id, avg(quantity) as avg_quantity
+from temp_table
+group by order_id;
+
+
+
+
+5. drop function if exists CalculateDivision;
+
+
+DELIMITER //
+
+
+create function CalculateDivision(num1 float, num2 float)
+returns float
+deterministic
+no sql
+begin 
+        declare result float;
+        set result = num1 / num2;
+        return result;
+end //
+
+
+DELIMITER ;
+
+
+
+
+select CalculateDivision(quantity, 2) as result from order_details
